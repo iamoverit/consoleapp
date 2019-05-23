@@ -2,7 +2,7 @@ plugins {
     id 'java'
 }
 
-group 'com.iamoverit.testconsoleapp'
+group 'com.iamoverit.ConsoleApp'
 version '1.0-SNAPSHOT'
 
 apply plugin: 'java'
@@ -14,7 +14,7 @@ repositories {
     mavenCentral()
 }
 
-mainClassName = "testconsoleapp"
+mainClassName = "ConsoleApp"
 
 jar {
     manifest {
