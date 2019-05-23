@@ -19,6 +19,8 @@ import java.util.stream.Collectors;
 
 class ConsoleApp {
     private static boolean duplicatesNotFound = true;
+    private static Map<ItemKey, Integer> itemHashMap = new HashMap<>();
+    private static Map<CityFloorKey, Integer> cityFloorHashMap = new HashMap<>();
 
     static class CityFloorKey {
         private String city;
@@ -72,10 +74,6 @@ class ConsoleApp {
         }
     }
 
-    //    private static List<String> cityList = new ArrayList<>();
-    private static Map<ItemKey, Integer> itemHashMap = new HashMap<>();
-    private static Map<CityFloorKey, Integer> cityFloorHashMap = new HashMap<>();
-
     static public void main(String[] args) throws XMLStreamException, UnsupportedEncodingException {
         if (args.length == 0) {
             System.err.println("Please specify path to file as first argument.");
@@ -86,7 +84,7 @@ class ConsoleApp {
               but they are already printed as xml ->
             */
             // Map<ItemKey, Integer> duplicates = filterByValue(itemHashMap, x -> (x > 1));
-            if(duplicatesNotFound){
+            if (duplicatesNotFound) {
                 System.out.println("Duplicates not found.");
             }
             if (cityFloorHashMap.isEmpty()) {
@@ -133,7 +131,7 @@ class ConsoleApp {
                         cityFloorHashMap.put(cityFloorKey, ++floorsCount);
 
                         if (count == 2) {
-                            if(duplicatesNotFound) {
+                            if (duplicatesNotFound) {
                                 System.out.println("Duplicates:");
                             }
                             duplicatesNotFound = false;
