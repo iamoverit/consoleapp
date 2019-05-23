@@ -18,6 +18,8 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 class ConsoleApp {
+    private static boolean duplicatesNotFound = true;
+
     static class CityFloorKey {
         private String city;
         private String floor;
@@ -84,9 +86,15 @@ class ConsoleApp {
               but they are already printed as xml ->
             */
             // Map<ItemKey, Integer> duplicates = filterByValue(itemHashMap, x -> (x > 1));
-            System.out.println("How many n-storey buildings in each city:");
-            cityFloorHashMap.forEach((k, v) -> System.out.println("City: " + k.city + " Floors: " + k.floor + " = " + v + " count"));
-
+            if(duplicatesNotFound){
+                System.out.println("Duplicates not found.");
+            }
+            if (cityFloorHashMap.isEmpty()) {
+                System.out.println("Buildings with storeys not found.");
+            } else {
+                System.out.println("How many n-storey buildings in each city:");
+                cityFloorHashMap.forEach((k, v) -> System.out.println("City: " + k.city + " Floors: " + k.floor + " = " + v + " count"));
+            }
         }
     }
 
@@ -102,7 +110,6 @@ class ConsoleApp {
                 StAXSource source = new StAXSource(reader);
                 StAXResult result = new StAXResult(writer);
 
-                System.out.println("Duplicates:");
                 while (reader.hasNext()) {
                     int event = reader.next();
                     if (event == XMLEvent.START_ELEMENT &&
@@ -126,6 +133,10 @@ class ConsoleApp {
                         cityFloorHashMap.put(cityFloorKey, ++floorsCount);
 
                         if (count == 2) {
+                            if(duplicatesNotFound) {
+                                System.out.println("Duplicates:");
+                            }
+                            duplicatesNotFound = false;
                             t.transform(source, result);
                             System.out.println();
                         }
@@ -133,6 +144,8 @@ class ConsoleApp {
                 }
             } catch (IOException | TransformerException e) {
                 e.printStackTrace();
+            } catch (XMLStreamException e) {
+                throw new IllegalArgumentException(arg.concat(" > is invalid XML file."));
             }
 
         } else {
