@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-class testconsoleapp {
+class ConsoleApp {
     static public void main(String[] args) throws IOException, XMLStreamException {
         if (args.length == 0) {
             System.err.println("Please specify path to file as first argument.");
