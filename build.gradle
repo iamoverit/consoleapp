@@ -1,0 +1,27 @@
+plugins {
+    id 'java'
+}
+
+group 'com.iamoverit.testconsoleapp'
+version '1.0-SNAPSHOT'
+
+apply plugin: 'java'
+apply plugin: 'application'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+mainClassName = "testconsoleapp"
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'testconsoleapp'
+    }
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+}
