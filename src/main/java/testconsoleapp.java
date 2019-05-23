@@ -8,8 +8,11 @@ import java.nio.file.Paths;
 
 class testconsoleapp {
     static public void main(String[] args) throws IOException, XMLStreamException {
+        if (args.length == 0) {
+            System.err.println("Please specify path to file as first argument.");
+        }
         File file = new File(args[0]);
-        if(file.exists()){
+        if (file.exists()) {
             try (StaxStreamProcessor processor = new StaxStreamProcessor(Files.newInputStream(Paths.get(file.getPath())))) {
                 XMLStreamReader reader = processor.getReader();
                 while (reader.hasNext()) {       // while not end of XML
@@ -23,7 +26,7 @@ class testconsoleapp {
             }
 
         } else {
-            throw new IllegalArgumentException(args[0].concat(" is not valid file resource."));
+            throw new IllegalArgumentException(args[0].concat(" > is not valid file resource."));
         }
 
     }
