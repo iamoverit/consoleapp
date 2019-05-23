@@ -15,8 +15,8 @@ class ConsoleApp {
         if (file.exists()) {
             try (StaxStreamProcessor processor = new StaxStreamProcessor(Files.newInputStream(Paths.get(file.getPath())))) {
                 XMLStreamReader reader = processor.getReader();
-                while (reader.hasNext()) {       // while not end of XML
-                    int event = reader.next();   // read next event
+                while (reader.hasNext()) {
+                    int event = reader.next();
                     if (event == XMLEvent.START_ELEMENT &&
                             "item".equals(reader.getLocalName())) {
 
