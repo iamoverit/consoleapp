@@ -1,15 +1,8 @@
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
-import javax.xml.stream.XMLStreamWriter;
 import javax.xml.stream.events.XMLEvent;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.stax.StAXResult;
-import javax.xml.transform.stax.StAXSource;
 import java.io.File;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
@@ -18,7 +11,6 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 class ConsoleApp {
-    private static boolean duplicatesNotFound = true;
     private static Map<ItemKey, Integer> itemHashMap = new HashMap<>();
     private static Map<CityFloorKey, Integer> cityFloorHashMap = new HashMap<>();
 
@@ -72,20 +64,27 @@ class ConsoleApp {
         public int hashCode() {
             return (city + "." + street + "." + house + "." + floor).hashCode();
         }
+
+        @Override
+        public String toString() {
+            return "item [city=\"" + city + "\" street=\"" + street + "\" house=\"" + house + "\" floor=\"" + floor + "\"]";
+        }
     }
 
-    static public void main(String[] args) throws XMLStreamException, UnsupportedEncodingException {
+    static public void main(String[] args) throws XMLStreamException {
         if (args.length == 0) {
             System.err.println("Please specify path to file as first argument.");
         } else {
             processFile(args[0]);
-            /*
-              we can get filtered array with only items which are duplicated,
-              but they are already printed as xml ->
-            */
-            // Map<ItemKey, Integer> duplicates = filterByValue(itemHashMap, x -> (x > 1));
-            if (duplicatesNotFound) {
+
+            Map<ItemKey, Integer> duplicates = filterByValue(itemHashMap, x -> (x > 1));
+            if (duplicates.isEmpty()) {
                 System.out.println("Duplicates not found.");
+            } else {
+                System.out.println("Duplicates:");
+                duplicates.forEach((k, v) -> {
+                    System.out.println(k.toString() + " occurs " + v + " times");
+                });
             }
             if (cityFloorHashMap.isEmpty()) {
                 System.out.println("Buildings with storeys not found.");
@@ -101,12 +100,6 @@ class ConsoleApp {
         if (file.exists()) {
             try (StaxStreamProcessor processor = new StaxStreamProcessor(Files.newInputStream(Paths.get(file.getPath())), System.out)) {
                 XMLStreamReader reader = processor.getReader();
-                XMLStreamWriter writer = processor.getWriter();
-
-                TransformerFactory tf = TransformerFactory.newInstance();
-                Transformer t = tf.newTransformer();
-                StAXSource source = new StAXSource(reader);
-                StAXResult result = new StAXResult(writer);
 
                 while (reader.hasNext()) {
                     int event = reader.next();
@@ -123,14 +116,7 @@ class ConsoleApp {
                         int count = itemHashMap.getOrDefault(itemKey, 0);
                         itemHashMap.put(itemKey, ++count);
 
-                        if (count == 2) {
-                            if (duplicatesNotFound) {
-                                System.out.println("Duplicates:");
-                            }
-                            duplicatesNotFound = false;
-                            t.transform(source, result);
-                            System.out.println();
-                        } else if (count == 1) {
+                        if (count == 1) {
                             CityFloorKey cityFloorKey = new CityFloorKey(
                                     reader.getAttributeValue(null, "city"),
                                     reader.getAttributeValue(null, "floor")
@@ -140,7 +126,7 @@ class ConsoleApp {
                         }
                     }
                 }
-            } catch (IOException | TransformerException e) {
+            } catch (IOException e) {
                 e.printStackTrace();
             } catch (XMLStreamException e) {
                 throw new IllegalArgumentException(arg.concat(" > is invalid XML file."));
