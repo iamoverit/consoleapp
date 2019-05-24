@@ -123,13 +123,6 @@ class ConsoleApp {
                         int count = itemHashMap.getOrDefault(itemKey, 0);
                         itemHashMap.put(itemKey, ++count);
 
-                        CityFloorKey cityFloorKey = new CityFloorKey(
-                                reader.getAttributeValue(null, "city"),
-                                reader.getAttributeValue(null, "floor")
-                        );
-                        int floorsCount = cityFloorHashMap.getOrDefault(cityFloorKey, 0);
-                        cityFloorHashMap.put(cityFloorKey, ++floorsCount);
-
                         if (count == 2) {
                             if (duplicatesNotFound) {
                                 System.out.println("Duplicates:");
@@ -137,6 +130,13 @@ class ConsoleApp {
                             duplicatesNotFound = false;
                             t.transform(source, result);
                             System.out.println();
+                        } else if (count == 1) {
+                            CityFloorKey cityFloorKey = new CityFloorKey(
+                                    reader.getAttributeValue(null, "city"),
+                                    reader.getAttributeValue(null, "floor")
+                            );
+                            int floorsCount = cityFloorHashMap.getOrDefault(cityFloorKey, 0);
+                            cityFloorHashMap.put(cityFloorKey, ++floorsCount);
                         }
                     }
                 }
